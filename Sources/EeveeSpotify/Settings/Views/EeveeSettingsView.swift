@@ -125,7 +125,7 @@ struct EeveeSettingsView: View {
         }
         .listStyle(GroupedListStyle())
         .background(Color(red: 11/255, green: 12/255, blue: 16/255)) // #0b0c10
-        .scrollContentBackground(.hidden)
+        //.scrollContentBackground(.hidden)
         
         .animation(.default, value: isClearingData)
         .animation(.default, value: hasShownCommonIssuesTip)
