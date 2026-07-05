@@ -4,8 +4,8 @@ import UIKit
 struct EeveeSettingsView: View {
     let navigationController: UINavigationController
     
-    // ★テーマカラーを「Music space」の洗練されたSpotifyグリーン（#1db954）に！
-    static let spotifyAccentColor = Color(hex: "#1db954")
+    // ★テーマカラー（#1db954）を確実なRGB指定に！
+    static let spotifyAccentColor = Color(red: 29/255, green: 185/255, blue: 84/255)
     
     @State private var hasShownCommonIssuesTip = UserDefaults.hasShownCommonIssuesTip
     @State private var isClearingData = false
@@ -21,13 +21,13 @@ struct EeveeSettingsView: View {
     
     init(navigationController: UINavigationController) {
         self.navigationController = navigationController
-        UIView.appearance().tintColor = UIColor(EeveeSettingsView.spotifyAccentColor)
+        UIView.appearance().tintColor = UIColor(red: 29/255, green: 185/255, blue: 84/255, alpha: 1.0)
     }
 
     var body: some View {
         List {
             EeveeSettingsVersionView()
-                .listRowBackground(Color(hex: "#0b0c10")) // 漆黒背景
+                .listRowBackground(Color(red: 11/255, green: 12/255, blue: 16/255)) // #0b0c10
             
             if !hasShownCommonIssuesTip {
                 CommonIssuesTipView(
@@ -36,7 +36,7 @@ struct EeveeSettingsView: View {
                         UserDefaults.hasShownCommonIssuesTip = true
                     }
                 )
-                .listRowBackground(Color(hex: "#161b22")) // カード背景
+                .listRowBackground(Color(red: 22/255, green: 27/255, blue: 34/255)) // #161b22
             }
             
             // パッチ設定
@@ -47,12 +47,12 @@ struct EeveeSettingsView: View {
                 )
             } label: {
                 NavigationSectionView(
-                    color: Color(hex: "#1db954"), // すべて統一感のあるグリーンへ
+                    color: Color(red: 29/255, green: 185/255, blue: 84/255),
                     title: "patching".localized,
                     imageSystemName: "hammer.fill"
                 )
             }
-            .listRowBackground(Color(hex: "#161b22"))
+            .listRowBackground(Color(red: 22/255, green: 27/255, blue: 34/255))
             
             // 歌詞設定
             Button {
@@ -62,12 +62,12 @@ struct EeveeSettingsView: View {
                 )
             } label: {
                 NavigationSectionView(
-                    color: Color(hex: "#1db954"),
+                    color: Color(red: 29/255, green: 185/255, blue: 84/255),
                     title: "lyrics".localized,
                     imageSystemName: "quote.bubble.fill"
                 )
             }
-            .listRowBackground(Color(hex: "#161b22"))
+            .listRowBackground(Color(red: 22/255, green: 27/255, blue: 34/255))
             
             // カスタム設定
             Button {
@@ -77,12 +77,12 @@ struct EeveeSettingsView: View {
                 )
             } label: {
                 NavigationSectionView(
-                    color: Color(hex: "#1db954"),
+                    color: Color(red: 29/255, green: 185/255, blue: 84/255),
                     title: "customization".localized,
                     imageSystemName: "paintpalette.fill"
                 )
             }
-            .listRowBackground(Color(hex: "#161b22"))
+            .listRowBackground(Color(red: 22/255, green: 27/255, blue: 34/255))
             
             // 実験機能
             Button {
@@ -92,15 +92,15 @@ struct EeveeSettingsView: View {
                 )
             } label: {
                 NavigationSectionView(
-                    color: Color(hex: "#1db954"),
+                    color: Color(red: 29/255, green: 185/255, blue: 84/255),
                     title: "experiments".localized,
                     imageSystemName: "sparkle"
                 )
             }
-            .listRowBackground(Color(hex: "#161b22"))
+            .listRowBackground(Color(red: 22/255, green: 27/255, blue: 34/255))
             
             // データリセット
-            Section(footer: Text("reset_data_description".localized).foregroundColor(Color(hex: "#8f9499"))) {
+            Section(footer: Text("reset_data_description".localized).foregroundColor(Color(red: 143/255, green: 148/255, blue: 153/255))) { // #8f9499
                 Button {
                     isClearingData = true
                     
@@ -117,14 +117,14 @@ struct EeveeSettingsView: View {
                     }
                     else {
                         Text("reset_data".localized)
-                            .foregroundColor(.red) // 警告は赤で強調
+                            .foregroundColor(.red)
                     }
                 }
             }
-            .listRowBackground(Color(hex: "#161b22"))
+            .listRowBackground(Color(red: 22/255, green: 27/255, blue: 34/255))
         }
         .listStyle(GroupedListStyle())
-        .background(Color(hex: "#0b0c10")) // 全体背景を完全な漆黒に
+        .background(Color(red: 11/255, green: 12/255, blue: 16/255)) // #0b0c10
         .scrollContentBackground(.hidden)
         
         .animation(.default, value: isClearingData)
