@@ -3,25 +3,13 @@ import UIKit
 
 struct EeveeSettingsView: View {
     let navigationController: UINavigationController
-    static let spotifyAccentColor = Color(hex: "#1ed760")
+    
+    // ★テーマカラーを「Music space」の洗練されたSpotifyグリーン（#1db954）に！
+    static let spotifyAccentColor = Color(hex: "#1db954")
     
     @State private var hasShownCommonIssuesTip = UserDefaults.hasShownCommonIssuesTip
     @State private var isClearingData = false
-
-    private func confirmDestructive(
-        title: String,
-        message: String,
-        confirmTitle: String,
-        onConfirm: @escaping () -> Void
-    ) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "Cancel".uiKitLocalized, style: .cancel))
-        alert.addAction(UIAlertAction(title: confirmTitle, style: .destructive) { _ in
-            onConfirm()
-        })
-        WindowHelper.shared.present(alert)
-    }
-
+    
     private func pushSettingsController(with view: any View, title: String) {
         let viewController = EeveeSettingsViewController(
             navigationController.view.frame,
@@ -39,6 +27,7 @@ struct EeveeSettingsView: View {
     var body: some View {
         List {
             EeveeSettingsVersionView()
+                .listRowBackground(Color(hex: "#0b0c10")) // 漆黒背景
             
             if !hasShownCommonIssuesTip {
                 CommonIssuesTipView(
@@ -47,10 +36,10 @@ struct EeveeSettingsView: View {
                         UserDefaults.hasShownCommonIssuesTip = true
                     }
                 )
+                .listRowBackground(Color(hex: "#161b22")) // カード背景
             }
             
-            //
-            
+            // パッチ設定
             Button {
                 pushSettingsController(
                     with: EeveePatchingSettingsView(),
@@ -58,12 +47,14 @@ struct EeveeSettingsView: View {
                 )
             } label: {
                 NavigationSectionView(
-                    color: .orange,
+                    color: Color(hex: "#1db954"), // すべて統一感のあるグリーンへ
                     title: "patching".localized,
                     imageSystemName: "hammer.fill"
                 )
             }
+            .listRowBackground(Color(hex: "#161b22"))
             
+            // 歌詞設定
             Button {
                 pushSettingsController(
                     with: EeveeLyricsSettingsView(),
@@ -71,12 +62,14 @@ struct EeveeSettingsView: View {
                 )
             } label: {
                 NavigationSectionView(
-                    color: .blue,
+                    color: Color(hex: "#1db954"),
                     title: "lyrics".localized,
                     imageSystemName: "quote.bubble.fill"
                 )
             }
+            .listRowBackground(Color(hex: "#161b22"))
             
+            // カスタム設定
             Button {
                 pushSettingsController(
                     with: EeveeUISettingsView(),
@@ -84,12 +77,14 @@ struct EeveeSettingsView: View {
                 )
             } label: {
                 NavigationSectionView(
-                    color: Color(hex: "#64D2FF"),
+                    color: Color(hex: "#1db954"),
                     title: "customization".localized,
                     imageSystemName: "paintpalette.fill"
                 )
             }
+            .listRowBackground(Color(hex: "#161b22"))
             
+            // 実験機能
             Button {
                 pushSettingsController(
                     with: EeveeExperimentsSettingsView(),
@@ -97,97 +92,23 @@ struct EeveeSettingsView: View {
                 )
             } label: {
                 NavigationSectionView(
-                    color: .purple,
+                    color: Color(hex: "#1db954"),
                     title: "experiments".localized,
                     imageSystemName: "sparkle"
                 )
             }
-
-            Button {
-                pushSettingsController(
-                    with: SponsorBlockSettingsView(),
-                    title: "sponsorblock".localized
-                )
-            } label: {
-                NavigationSectionView(
-                    color: .red,
-                    title: "sponsorblock".localized,
-                    imageSystemName: "forward.end.fill"
-                )
-            }
-
-            Button {
-                pushSettingsController(
-                    with: EeveeAppIconPickerView(),
-                    title: "appIcon".localized
-                )
-            } label: {
-                NavigationSectionView(
-                    color: .pink,
-                    title: "appIcon".localized,
-                    imageSystemName: "app.badge.fill"
-                )
-            }
-
-            //
-
-            Section(header: Text("debug_title".localized), footer: Text("debug_section_footer".localized)) {
-                Button {
-                    let logPath = NSTemporaryDirectory() + "eeveespotify_debug.log"
-                    guard FileManager.default.fileExists(atPath: logPath),
-                          let logData = FileManager.default.contents(atPath: logPath),
-                          logData.count > 0 else {
-                        PopUpHelper.showPopUp(message: "no_debug_log_found".localized, buttonText: "no_debug_log_found_ok".localized)
-                        return
-                    }
-                    let logURL = URL(fileURLWithPath: logPath)
-                    let activityVC = UIActivityViewController(activityItems: [logURL], applicationActivities: nil)
-                    if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                       let rootVC = scene.windows.first?.rootViewController {
-                        var topVC = rootVC
-                        while let presented = topVC.presentedViewController { topVC = presented }
-                        if let popover = activityVC.popoverPresentationController {
-                            popover.sourceView = topVC.view
-                            popover.sourceRect = CGRect(x: topVC.view.bounds.midX, y: topVC.view.bounds.midY, width: 0, height: 0)
-                        }
-                        topVC.present(activityVC, animated: true)
-                    }
-                } label: {
-                    HStack {
-                        Image(systemName: "square.and.arrow.up")
-                        Text("export_debug_log".localized)
-                    }
-                }
-                
-                Button {
-                    let logPath = NSTemporaryDirectory() + "eeveespotify_debug.log"
-                    try? "".write(toFile: logPath, atomically: true, encoding: .utf8)
-                    writeDebugLog("Log cleared by user")
-                    PopUpHelper.showPopUp(message: "debug_log_cleared".localized, buttonText: "debug_log_cleared_ok".localized)
-                } label: {
-                    HStack {
-                        Image(systemName: "trash")
-                        Text("clear_debug_log".localized)
-                    }
-                    .foregroundColor(.red)
-                }
-            }
+            .listRowBackground(Color(hex: "#161b22"))
             
-            Section(footer: Text("reset_data_description".localized)) {
+            // データリセット
+            Section(footer: Text("reset_data_description".localized).foregroundColor(Color(hex: "#8f9499"))) {
                 Button {
-                    confirmDestructive(
-                        title: "reset_data".localized,
-                        message: "reset_data_description".localized,
-                        confirmTitle: "reset_data".localized
-                    ) {
-                        isClearingData = true
-
-                        DispatchQueue.global(qos: .userInitiated).async {
-                            OfflineHelper.resetData(clearCaches: true)
-
-                            DispatchQueue.main.async {
-                                exitApplication()
-                            }
+                    isClearingData = true
+                    
+                    DispatchQueue.global(qos: .userInitiated).async {
+                        OfflineHelper.resetData(clearCaches: true)
+                        
+                        DispatchQueue.main.async {
+                            exitApplication()
                         }
                     }
                 } label: {
@@ -196,42 +117,15 @@ struct EeveeSettingsView: View {
                     }
                     else {
                         Text("reset_data".localized)
+                            .foregroundColor(.red) // 警告は赤で強調
                     }
                 }
             }
-
-            Section(footer: Text("resetFooter".localized)) {
-                Button {
-                    confirmDestructive(
-                        title: "resetButtonTitle".localized,
-                        message: "resetSubtitle".localized,
-                        confirmTitle: "resetButtonTitle".localized
-                    ) {
-                        isClearingData = true
-                        DispatchQueue.global(qos: .userInitiated).async {
-                            FullResetHelper.wipeSpotifyState()
-                            DispatchQueue.main.async {
-                                exitApplication()
-                            }
-                        }
-                    }
-                } label: {
-                    HStack {
-                        Image(systemName: "exclamationmark.triangle.fill")
-                        Text("resetButtonTitle".localized)
-                    }
-                    .foregroundColor(.red)
-                }
-            }
-
-            Section {
-                Color.clear
-                    .frame(height: 90)
-                    .listRowBackground(Color.clear)
-                    .listRowInsets(EdgeInsets())
-            }
+            .listRowBackground(Color(hex: "#161b22"))
         }
         .listStyle(GroupedListStyle())
+        .background(Color(hex: "#0b0c10")) // 全体背景を完全な漆黒に
+        .scrollContentBackground(.hidden)
         
         .animation(.default, value: isClearingData)
         .animation(.default, value: hasShownCommonIssuesTip)
